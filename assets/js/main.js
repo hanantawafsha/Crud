@@ -18,77 +18,84 @@ if (localStorage.getItem("products") != null) {
 
 addButton.addEventListener("click", (e) => {
   e.preventDefault();
-  const namePattern = /^[A-Z][a-z]{5,}$/;
-  const categoryPattern = /^[A-Z][a-z]{5,}$/;
-  const pricePattern = /^[0-9]{2,3}/;
-  const descriptionPattern = /^[A-Z][a-z]{10,}$/;
-  let isValid= true;
-    if (!namePattern.test(name.value)) {
-      invalidName.innerHTML =
-        "this field is required and it should start with Capital letters and atleast 5 small characters.";
-        name.classList.add("is-invalid");
-        isValid=false;
-    }
-    if (!categoryPattern.test(category.value)) {
-      invalidCategory.innerHTML =
-      "this field is required and it should start with Capital letters and atleast 5 small characters.";
-      category.classList.add("is-invalid");
-        isValid=false;
-    }
-    if (!pricePattern.test(price.value)) {
-      invalidPrice.innerHTML =
-        "this field is required and it should be a number between 10 and 999.";
-        price.classList.add("is-invalid");
-        isValid=false;
+  // Name pattern: starts with a capital letter, followed by at least 4 lowercase letters
+  const namePattern = /^[A-Z][a-z]{2,}[0-9]$/;
 
-    }
+  // Category pattern: starts with a capital letter, followed by at least 4 lowercase letters
+  const categoryPattern = /^[A-Z][a-z]{4,}$/;
 
-    if (!descriptionPattern.test(description.value)) {
-      invalidDescription.innerHTML =
-      "this field is required and it should start with Capital letters and atleast 10 small characters.";
-      description.classList.add("is-invalid");
-        isValid=false;
+  // Price pattern: a number between 10 and 999 (no decimals)
+  const pricePattern = /^\d{2,3}$/;
 
-    }
-    if (isValid==true){
-        const newProduct = {
-            name: name.value,
-            category: category.value,
-            price: parseFloat(price.value),
-            description: description.value,
-          };
-          products.push(newProduct);
-          console.log(products);
-          localStorage.setItem("products", JSON.stringify(products));
-          //   display toaste after adding new product
-          Swal.fire({
-            icon: "success",
-            title: "Product added successfully!",
-            text: "New product has been added to the list.",
-          });
-          displayProducts();
-          invalidName.innerHTML ="";
-          name.classList.remove("is-invalid");
-          name.classList.add("is-valid");
-          invalidCategory.innerHTML ="";
-          category.classList.remove("is-invalid");
-          category.classList.add("is-valid");
-          invalidDescription.innerHTML ="";
-          description.classList.remove("is-invalid");
-          description.classList.add("is-valid");
-          invalidPrice.innerHTML ="";
-          price.classList.remove("is-invalid");
-          price.classList.add("is-valid");
-    }
-    else{
-        // show error message
-        Swal.fire({
-          icon: "error",
-          title: "Invalid input!",
-          text: "Please make sure all fields are filled correctly.",
-        });
-    }
- 
+  // Description pattern: starts with a capital letter and at least 5 lowercase letters
+  const descriptionPattern = /^[A-Z][a-z]{6,}$/;
+  let isValid = true;
+  if (!namePattern.test(name.value)) {
+    invalidName.innerHTML =
+      "this field is required and should start with a capital letter, followed by at least 2 lowercase letters and number.";
+    name.classList.add("is-invalid");
+    isValid = false;
+  }
+  if (!categoryPattern.test(category.value)) {
+    invalidCategory.innerHTML =
+    "this field is required and should start with a capital letter, followed by at least 4 lowercase letters.";
+    category.classList.add("is-invalid");
+    isValid = false;
+  }
+  if (!pricePattern.test(price.value)) {
+    invalidPrice.innerHTML =
+      "this field is required and it should be a number between 10 and 999 (no decimals).";
+    price.classList.add("is-invalid");
+    isValid = false;
+  }
+
+  if (!descriptionPattern.test(description.value)) {
+    invalidDescription.innerHTML =
+    "this field is required and should start with a capital letter, followed by at least 6 lowercase letters.";
+    description.classList.add("is-invalid");
+    isValid = false;
+  }
+  if (isValid) {
+    const newProduct = {
+      name: name.value,
+      category: category.value,
+      price: parseFloat(price.value),
+      description: description.value,
+    };
+    products.push(newProduct);
+    console.log(products);
+    localStorage.setItem("products", JSON.stringify(products));
+    //   display toaste after adding new product
+    Swal.fire({
+      icon: "success",
+      title: "Product added successfully!",
+      text: "New product has been added to the list.",
+    });
+    displayProducts();
+    // Clear validation messages and set valid classes
+    invalidName.innerHTML = "";
+    name.classList.remove("is-invalid");
+    name.classList.add("is-valid");
+
+    invalidCategory.innerHTML = "";
+    category.classList.remove("is-invalid");
+    category.classList.add("is-valid");
+
+    invalidDescription.innerHTML = "";
+    description.classList.remove("is-invalid");
+    description.classList.add("is-valid");
+
+    invalidPrice.innerHTML = "";
+    price.classList.remove("is-invalid");
+    price.classList.add("is-valid");
+  } else {
+    // show error message
+    Swal.fire({
+      icon: "error",
+      title: "Invalid input!",
+      text: "Please make sure all fields are filled correctly.",
+    });
+  }
 });
 
 // Function to display products
@@ -100,7 +107,7 @@ function displayProducts(filteredProducts = null) {
     .map((product, index) => {
       return `
         <tr> 
-    <td> ${index}</td>
+    <td> ${index + 1}</td>
     <td> ${product.name}</td>
     <td> ${product.category}</td>
     <td> ${product.price}</td>
@@ -268,7 +275,7 @@ document.getElementById("search").addEventListener("input", function () {
     (product) =>
       product.name.toLowerCase().includes(query) ||
       product.category.toLowerCase().includes(query) ||
-      product.description.toLowerCase().includes(query)||
+      product.description.toLowerCase().includes(query) ||
       product.price.toString().toLowerCase().includes(query) // Convert price to string
   );
 
